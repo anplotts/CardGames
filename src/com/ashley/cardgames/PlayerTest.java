@@ -18,5 +18,5 @@ class PlayerTest {
         assertTrue(player.hand.contains(card));
     }
 
-    // jhkjhiuiuhi
+    
 }

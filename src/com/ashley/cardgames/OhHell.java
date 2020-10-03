@@ -1,9 +1,6 @@
 package com.ashley.cardgames;
 
-import java.util.Random;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class OhHell {
     List<Player> players;
@@ -50,23 +47,20 @@ public class OhHell {
         }
     }
 
-    public void startGame() {
-
-    }
-
     // game play
     public void playGame() {
         Random rand = new Random();
         int firstBidder = rand.nextInt(players.size());
-        deck.shuffle();
-        deal(1);
 
-        for (int round = 0; round < 20; round++) {
+        for (int round = 1; round < 20; round++) {
+            int numCardsForRound = round < 11 ? 11 - round : round - 9; // Starts by dealing 10, down to 1, then back to 10
 
-            // Shuffle and deal cards
-            //Players bid on number of tricks
+            deck.shuffle();
+            deal(numCardsForRound);
+            Card trumpCard = deck.drawCard();
+            System.out.println("Trump is " + trumpCard.suit);
+            ArrayList<Integer> bids = getBids(numCardsForRound);
 
-            int numCardsForRound = 10; //Need to set based on round number, <10 set to round, >10 set to 20-round ??
 
             for (int hand = 0; hand < numCardsForRound; hand++) {
 
@@ -76,6 +70,29 @@ public class OhHell {
 
             }
         }
+    }
+
+    public ArrayList<Integer> getBids(int numCardsForRound) {
+        Scanner input = new Scanner(System.in);
+        ArrayList<Integer> bids = new ArrayList<>();
+        int totalBids = 0;
+
+        for (int player = 0; player < players.size(); player++) {
+            System.out.println(players.get(player).hand);
+
+            if (player == players.size() - 1) {
+               int bidAmountNotAllowed = numCardsForRound - totalBids;
+                System.out.print(players.get(player).name + ", please submit a bid that is NOT " + bidAmountNotAllowed + ": ");
+            }
+            else {
+                System.out.print(players.get(player).name + ", please submit your bid: ");
+            }
+            int playerBid = input.nextInt();
+            totalBids += playerBid;
+            bids.add(playerBid);
+        }
+
+        return bids;
     }
 
 

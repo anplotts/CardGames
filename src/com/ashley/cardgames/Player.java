@@ -1,10 +1,11 @@
 package com.ashley.cardgames;
 
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Player {
     String name;
-    Stack<Card> hand = new Stack<Card>();
+    private ArrayList<Card> hand = new ArrayList<>();
 
     // Takes player's name as input to create a Player
     public Player(String name) {
@@ -16,14 +17,19 @@ public class Player {
         return name;
     }
 
-    // Will sort player's hand based on some criteria yet to be determined
+    // Sorts players hand by suit, then value
     public void sortHand() {
-
+        Collections.sort(hand, HandSorter.instance);
     }
 
     // Adds card input to player's hand
     public void giveCard(Card card) {
-        hand.push(card);
+        hand.add(card);
+    }
+
+    // Returns the players hand as a string
+    public String getHandAsString() {
+        return hand.toString();
     }
 
 }

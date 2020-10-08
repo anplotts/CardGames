@@ -38,13 +38,43 @@ public class OhHell {
 
     }
 
-    // Order of deal doesn't matter
+    // Order of deal doesn't matter, sorts each player's hands after dealing cards - clubs, diamonds, spades, hearts
     public void deal(int numCards) {
         for (int i = 0; i < numCards; i++) {
             for (Player player : players) {
                 player.giveCard(deck.drawCard());
             }
         }
+
+        for (Player player : players) {
+            player.sortHand();
+        }
+
+    }
+
+    // Asks players for bids and adds each bid to an array - index corresponds with player number
+    public int[] getBids(int numCardsForRound, int firstBidder) {
+        Scanner input = new Scanner(System.in);
+        int[] bids = new int[players.size()];
+        int totalBids = 0;
+
+        for (int player = 0; player < players.size(); player++) {
+            int currentIndex = (player + firstBidder) % players.size();
+            System.out.println(players.get(currentIndex).getHandAsString());
+
+            if (player == players.size() - 1 && totalBids <= numCardsForRound ) {
+                int bidAmountNotAllowed = numCardsForRound - totalBids;
+                System.out.print(players.get(currentIndex).name + ", please submit a bid that is NOT " + bidAmountNotAllowed + ": ");
+            }
+            else {
+                System.out.print(players.get(currentIndex).name + ", please submit your bid: ");
+            }
+            int playerBid = input.nextInt();
+            totalBids += playerBid;
+            bids[currentIndex] = playerBid;
+        }
+
+        return bids;
     }
 
     // game play
@@ -59,7 +89,9 @@ public class OhHell {
             deal(numCardsForRound);
             Card trumpCard = deck.drawCard();
             System.out.println("Trump is " + trumpCard.suit);
-            ArrayList<Integer> bids = getBids(numCardsForRound);
+
+            int[] bids = getBids(numCardsForRound, firstBidder);
+            firstBidder++;
 
 
             for (int hand = 0; hand < numCardsForRound; hand++) {
@@ -72,28 +104,7 @@ public class OhHell {
         }
     }
 
-    public ArrayList<Integer> getBids(int numCardsForRound) {
-        Scanner input = new Scanner(System.in);
-        ArrayList<Integer> bids = new ArrayList<>();
-        int totalBids = 0;
 
-        for (int player = 0; player < players.size(); player++) {
-            System.out.println(players.get(player).hand);
-
-            if (player == players.size() - 1) {
-               int bidAmountNotAllowed = numCardsForRound - totalBids;
-                System.out.print(players.get(player).name + ", please submit a bid that is NOT " + bidAmountNotAllowed + ": ");
-            }
-            else {
-                System.out.print(players.get(player).name + ", please submit your bid: ");
-            }
-            int playerBid = input.nextInt();
-            totalBids += playerBid;
-            bids.add(playerBid);
-        }
-
-        return bids;
-    }
 
 
 }

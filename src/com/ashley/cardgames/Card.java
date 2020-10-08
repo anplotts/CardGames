@@ -15,4 +15,6 @@ public class Card {
     public String toString() {
         return "[" + value + "," + suit + "]";
     }
+
+    // Override equals method for decks that have multiple of one card - equatable?
 }

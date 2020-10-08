@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Stack;
 
 public class Deck {
-    public Stack<Card> deck;
-    public Stack<Card> drawPile; //private - testing private? test public things that use when I have them?
-    public Stack<Card> discardPile = new Stack<>(); //private
+    private final Stack<Card> deck;
+    private Stack<Card> drawPile;
+    private Stack<Card> discardPile = new Stack<>();
 
     // Takes a stack of Card objects as input to create a deck of cards
     public Deck(Stack<Card> deck) {
@@ -14,7 +14,7 @@ public class Deck {
     }
 
     // Creates a draw pile by cloning the deck stack
-    public void initializeDrawPile() {  //private
+    private void initializeDrawPile() {
         drawPile = (Stack<Card>)deck.clone();
     }
 
@@ -34,8 +34,21 @@ public class Deck {
         discardPile.push(card);
     }
 
-    // Will shuffle the discard pile
+    // Shuffles the discard pile and sets it as the new draw pile, for use when draw pile is empty
     public void shuffleDiscard() {
-
+        Collections.shuffle(discardPile);
+        drawPile = discardPile;
+        discardPile = new Stack<>();
     }
+
+    // Returns the size of the Draw Pile
+    public int getDrawPileSize() {
+        return drawPile.size();
+    }
+
+
+    public Card drawFromDiscard() {
+        return discardPile.pop();
+    }
+
 }

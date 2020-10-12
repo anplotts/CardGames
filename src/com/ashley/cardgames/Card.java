@@ -16,5 +16,5 @@ public class Card {
         return "[" + value + "," + suit + "]";
     }
 
-    // Override equals method for decks that have multiple of one card - equatable?
+    // Override equals method for decks that have multiple of one card
 }

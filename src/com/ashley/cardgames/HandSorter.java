@@ -6,7 +6,7 @@ public class HandSorter implements Comparator<Card> {
 
     public static HandSorter instance = new HandSorter();
 
-    //enums make comparisons easier ??? change
+    // Find out more about enums
 
     public int compare(Card card1, Card card2) {
         if (card1.suit.equals(card2.suit)) {

@@ -29,5 +29,13 @@ class PlayerTest {
         assertEquals("[[3,Hearts]]", player.getHandAsString());
     }
 
-
+    @Test
+    // Checks that playCard plays the card from the correct index of the player's hand
+    void playCard() {
+        Player player = new Player("Ashley");
+        Card card = new Card(3, "Hearts");
+        player.giveCard(card);
+        Card playedCard = player.playCard(0);
+        assertEquals(card, playedCard);
+    }
 }

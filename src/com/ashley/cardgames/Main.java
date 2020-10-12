@@ -14,7 +14,7 @@ public class Main {
         switch (gameName) {
             case "Oh Hell":
                 int maxNumPlayers = OhHell.getMaxNumPlayers();
-                ArrayList<Player> players = getPlayers(maxNumPlayers, input);
+                ArrayList<OhHellPlayer> players = getPlayers(maxNumPlayers, input);
                 OhHell game = new OhHell(players);
                 game.playGame();
 
@@ -29,8 +29,10 @@ public class Main {
         }
     }
 
-    public static ArrayList<Player> getPlayers(int maxNumPlayers, Scanner input) {
-        ArrayList<Player> players = new ArrayList<>();
+
+    // need to change back to generic player
+    public static ArrayList<OhHellPlayer> getPlayers(int maxNumPlayers, Scanner input) {
+        ArrayList<OhHellPlayer> players = new ArrayList<>();
 
         System.out.println("Enter player names. Enter blank after last player.");
 
@@ -41,7 +43,7 @@ public class Main {
             if (playerName.isEmpty()) {
                 break;
             }
-            Player player = new Player(playerName);
+            OhHellPlayer player = new OhHellPlayer(playerName);
             players.add(player);
         }
 

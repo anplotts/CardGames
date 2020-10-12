@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Player {
-    String name;
-    private ArrayList<Card> hand = new ArrayList<>();
+    private String name;
+    protected ArrayList<Card> hand = new ArrayList<>();
 
     // Takes player's name as input to create a Player
     public Player(String name) {
@@ -17,9 +17,13 @@ public class Player {
         return name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     // Sorts players hand by suit, then value
     public void sortHand() {
-        Collections.sort(hand, HandSorter.instance);
+        hand.sort(HandSorter.instance);
     }
 
     // Adds card input to player's hand
@@ -30,6 +34,10 @@ public class Player {
     // Returns the players hand as a string
     public String getHandAsString() {
         return hand.toString();
+    }
+
+    public Card playCard(int cardIndex) {
+        return hand.remove(cardIndex);
     }
 
 }

@@ -3,11 +3,11 @@ package com.ashley.cardgames;
 import java.util.*;
 
 public class OhHell {
-    List<Player> players;
+    List<OhHellPlayer> players;
     Deck deck;
 
     // Takes player input and creates a new deck for the game
-    public OhHell(List<Player> players) {
+    public OhHell(List<OhHellPlayer> players) {
         this.players = players;
         deck = createDeck();
     }
@@ -53,55 +53,93 @@ public class OhHell {
     }
 
     // Asks players for bids and adds each bid to an array - index corresponds with player number
-    public int[] getBids(int numCardsForRound, int firstBidder) {
+    public void setBidsForRound(int numCardsForRound, int firstBidder) {
         Scanner input = new Scanner(System.in);
-        int[] bids = new int[players.size()];
         int totalBids = 0;
 
-        for (int player = 0; player < players.size(); player++) {
-            int currentIndex = (player + firstBidder) % players.size();
-            System.out.println(players.get(currentIndex).getHandAsString());
+        for (int index = 0; index < players.size(); index++) {
+            OhHellPlayer currentPlayer = players.get((index + firstBidder) % players.size());
+            System.out.println(currentPlayer.getHandAsString());
 
-            if (player == players.size() - 1 && totalBids <= numCardsForRound ) {
+            if (index == players.size() - 1 && totalBids <= numCardsForRound ) {
                 int bidAmountNotAllowed = numCardsForRound - totalBids;
-                System.out.print(players.get(currentIndex).name + ", please submit a bid that is NOT " + bidAmountNotAllowed + ": ");
+                System.out.print(currentPlayer.getName() + ", please submit a bid that is NOT " + bidAmountNotAllowed + ": ");
             }
             else {
-                System.out.print(players.get(currentIndex).name + ", please submit your bid: ");
+                System.out.print(currentPlayer.getName() + ", please submit your bid: ");
             }
             int playerBid = input.nextInt();
             totalBids += playerBid;
-            bids[currentIndex] = playerBid;
+            currentPlayer.setBid(playerBid);
         }
-
-        return bids;
     }
 
-    // game play
+    public OhHellPlayer determineWinnerOfHand(String trumpSuit, String leadCardSuit) {
+        var playersCopy = new ArrayList<>(players);
+        playersCopy.sort(new OhHellHandWinner(trumpSuit, leadCardSuit));
+
+        return playersCopy.get(playersCopy.size() - 1);
+    }
+
+    // game play, need to limit what card can be played in each hand
     public void playGame() {
         Random rand = new Random();
+        Scanner input = new Scanner(System.in);
         int firstBidder = rand.nextInt(players.size());
 
         for (int round = 1; round < 20; round++) {
             int numCardsForRound = round < 11 ? 11 - round : round - 9; // Starts by dealing 10, down to 1, then back to 10
 
+            for (OhHellPlayer player : players) {
+                player.resetTricks();
+            }
+
             deck.shuffle();
             deal(numCardsForRound);
+            String leadSuit = "";
             Card trumpCard = deck.drawCard();
             System.out.println("Trump is " + trumpCard.suit);
+            boolean isTrumpBroken = false;
 
-            int[] bids = getBids(numCardsForRound, firstBidder);
-            firstBidder++;
+            setBidsForRound(numCardsForRound, firstBidder);
+
+            int startingIndex = firstBidder;
 
 
             for (int hand = 0; hand < numCardsForRound; hand++) {
+                for (int index = 0; index < players.size(); index++) {
+                    OhHellPlayer currentPlayer = players.get((index + startingIndex) % players.size());
+                    System.out.println(currentPlayer.getName() + ", please enter the index of the card you wish to play.");
+                    System.out.println(currentPlayer.displayHandForPlayerTurn(index == 0, isTrumpBroken, trumpCard.suit, leadSuit));
+                    Card playedCard = currentPlayer.playCard(input.nextInt());
 
-                // for each hand, players play cards and score until hands are empty
-                // play starts with winner of last hand
-                // first hand starts with firstBidder
+                    if (playedCard.suit.equals(trumpCard.suit)) {
+                        isTrumpBroken = true;
+                    }
 
+                    if (index == 0) {
+                        leadSuit = playedCard.suit;
+                    }
+                }
+
+                OhHellPlayer winnerOfHand = determineWinnerOfHand(trumpCard.suit, leadSuit);
+                winnerOfHand.incrementTricks();
+                startingIndex = players.indexOf(winnerOfHand);
+            }
+
+            firstBidder++;
+
+            for (OhHellPlayer player : players) {
+                if (player.getBid() == player.getTricks()) {
+                    player.increaseScore((10 +player.getTricks()));
+                }
             }
         }
+
+        var playersCopy = new ArrayList<>(players);
+        Collections.sort(playersCopy);
+        Player winner = playersCopy.get(players.size() - 1);
+        System.out.println("Winner is " + winner);
     }
 
 
